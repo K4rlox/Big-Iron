@@ -192,7 +192,7 @@
 	if(!G.reaction_results["fire"])
 		return list("success" = FALSE, "message" = "Trit fires aren't setting fire results correctly!")
 	return ..()
-*/
+
 //plasma combustion: combustion of oxygen and plasma (treated as hydrocarbons). creates hotspots. exothermic
 /datum/gas_reaction/plasmafire
 	priority = -2 //fire should ALWAYS be last, but plasma fires happen after tritium fires
