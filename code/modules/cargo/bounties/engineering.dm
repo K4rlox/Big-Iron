@@ -17,11 +17,11 @@
 //	description = "The non-human staff of Station 88 has been volunteered to test performance enhancing drugs. Ship them a tank full of Nitryl so they can get started."
 //	gas_type = GAS_NITRYL
 
-/datum/bounty/item/engineering/gas/tritium_tank
+/*/datum/bounty/item/engineering/gas/tritium_tank
 	name = "Full Tank of Tritium"
 	description = "Station 49 is looking to kickstart their research program. Ship them a tank full of Tritium."
 	gas_type = GAS_TRITIUM
-
+*/
 /datum/bounty/item/engineering/pacman
 	name = "P.A.C.M.A.N.-type portable generator"
 	description = "A neighboring station had a problem with their SMES, and now need something to power their communications console. Can you send them a P.AC.M.A.N.?"

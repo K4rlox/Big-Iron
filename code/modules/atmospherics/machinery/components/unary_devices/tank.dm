@@ -98,9 +98,9 @@
 	icon_state = "red"
 	gas_type = GAS_STIMULUM
 
-/obj/machinery/atmospherics/components/unary/tank/tritium
+/*/obj/machinery/atmospherics/components/unary/tank/tritium
 	gas_type = GAS_TRITIUM
-
+*/
 /obj/machinery/atmospherics/components/unary/tank/water_vapor
 	icon_state = "grey"
 	gas_type = GAS_H2O

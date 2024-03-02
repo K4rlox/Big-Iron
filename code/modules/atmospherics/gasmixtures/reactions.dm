@@ -112,7 +112,7 @@
 	reagents_holder.reaction(location, TOUCH)
 
 //tritium combustion: combustion of oxygen and tritium (treated as hydrocarbons). creates hotspots. exothermic
-/datum/gas_reaction/tritfire
+/* /datum/gas_reaction/tritfire
 	priority = -1 //fire should ALWAYS be last, but tritium fires happen before plasma fires
 	exclude = TRUE // generic fire now takes care of this
 	name = "Tritium Combustion"
@@ -192,7 +192,7 @@
 	if(!G.reaction_results["fire"])
 		return list("success" = FALSE, "message" = "Trit fires aren't setting fire results correctly!")
 	return ..()
-
+*/
 //plasma combustion: combustion of oxygen and plasma (treated as hydrocarbons). creates hotspots. exothermic
 /datum/gas_reaction/plasmafire
 	priority = -2 //fire should ALWAYS be last, but plasma fires happen after tritium fires
@@ -242,8 +242,6 @@
 			air.set_moles(GAS_PLASMA, QUANTIZE(air.get_moles(GAS_PLASMA) - plasma_burn_rate))
 			air.set_moles(GAS_O2, QUANTIZE(air.get_moles(GAS_O2) - (plasma_burn_rate * oxygen_burn_rate)))
 			if (super_saturation)
-				air.adjust_moles(GAS_TRITIUM, plasma_burn_rate)
-			else
 				air.adjust_moles(GAS_CO2, plasma_burn_rate)
 
 			energy_released += FIRE_PLASMA_ENERGY_RELEASED * (plasma_burn_rate)
@@ -285,8 +283,6 @@
 	G.set_moles(GAS_O2,1000)
 	G.set_temperature(500)
 	result = G.react()
-	if(!G.get_moles(GAS_TRITIUM))
-		return list("success" = FALSE, "message" = "Plasma fires aren't making trit!")
 	return ..()
 
 /datum/gas_reaction/genericfire
@@ -372,7 +368,7 @@
 //Fusion Rework Counter: Please increment this if you make a major overhaul to this system again.
 //6 reworks
 
-/proc/fusion_ball(datum/holder, reaction_energy, instability)
+/* /proc/fusion_ball(datum/holder, reaction_energy, instability)
 	var/turf/open/location
 	if (istype(holder,/datum/pipeline)) //Find the tile the reaction is occuring on, or a random part of the network if it's a pipenet.
 		var/datum/pipeline/fusion_pipenet = holder
@@ -490,7 +486,7 @@
 		var/temp = G.return_temperature()
 		return list("success" = FALSE, "message" = "Fusion is not calculating temperature correctly, should be around 27600, is instead [temp]")
 	return ..()
-
+*/
 /datum/gas_reaction/nitrylformation //The formation of nitryl. Endothermic. Requires N2O as a catalyst.
 	priority = 3
 	name = "Nitryl formation"
@@ -788,7 +784,6 @@
 	var/new_temp = air.return_temperature()
 	var/list/gases = GLOB.gas_data.specific_heats.Copy()
 	gases -= GAS_QCD
-	gases -= GAS_TRITIUM // no refusing sorry
 	for(var/g in gases)
 		gases[g] = 10000 / gases[g]
 	while(energy_remaining > 0)

@@ -55,19 +55,19 @@
 		else
 			var/gasdrained = min(powerproduction_drain*drainratio,loaded_tank.air_contents.get_moles(GAS_PLASMA))
 			loaded_tank.air_contents.adjust_moles(GAS_PLASMA, -gasdrained)
-			loaded_tank.air_contents.adjust_moles(GAS_TRITIUM, gasdrained)
+//			loaded_tank.air_contents.adjust_moles(GAS_TRITIUM, gasdrained)
 
 			var/power_produced = RAD_COLLECTOR_OUTPUT
 			add_avail(power_produced)
 			stored_power-=power_produced
 	else if(is_station_level(z) && SSresearch.science_tech)
-		if(!loaded_tank.air_contents.get_moles(GAS_TRITIUM) || !loaded_tank.air_contents.get_moles(GAS_O2))
+		if(!loaded_tank.air_contents.get_moles(GAS_O2))
 			playsound(src, 'sound/machines/ding.ogg', 50, 1)
 			Radio.talk_into(src, "Insufficient oxygen and tritium in [get_area(src)] [src] to produce research points, ejecting \the [loaded_tank].", FREQ_ENGINEERING)
 			eject()
 		else
 			var/gasdrained = bitcoinproduction_drain*drainratio
-			loaded_tank.air_contents.adjust_moles(GAS_TRITIUM, -gasdrained)
+//			loaded_tank.air_contents.adjust_moles(GAS_TRITIUM, -gasdrained)
 			loaded_tank.air_contents.adjust_moles(GAS_O2, -gasdrained)
 			loaded_tank.air_contents.adjust_moles(GAS_CO2, gasdrained*2)
 			var/bitcoins_mined = stored_power*RAD_COLLECTOR_MINING_CONVERSION_RATE
