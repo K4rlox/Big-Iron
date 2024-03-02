@@ -122,10 +122,10 @@
 	exclude = world.system_type == MS_WINDOWS // temporary stopgap until generic fires work on linux
 	min_requirements = list(
 		"TEMP" = FIRE_MINIMUM_TEMPERATURE_TO_EXIST,
-		GAS_TRITIUM = MINIMUM_MOLE_COUNT,
+		GAS_CO2 = MINIMUM_MOLE_COUNT,
 		GAS_O2 = MINIMUM_MOLE_COUNT
 	)
-
+*/
 /proc/fire_expose(turf/open/location, datum/gas_mixture/air, temperature)
 	if(istype(location) && temperature > FIRE_MINIMUM_TEMPERATURE_TO_EXIST)
 		location.hotspot_expose(temperature, CELL_VOLUME)
@@ -133,11 +133,11 @@
 			var/atom/movable/item = I
 			item.temperature_expose(air, temperature, CELL_VOLUME)
 		location.temperature_expose(air, temperature, CELL_VOLUME)
-
+/*
 /proc/radiation_burn(turf/open/location, rad_power)
 	if(istype(location) && prob(10))
 		radiation_pulse(location, rad_power)
-
+*/
 /datum/gas_reaction/tritfire/react(datum/gas_mixture/air, datum/holder)
 	var/energy_released = 0
 	var/old_heat_capacity = air.heat_capacity()
@@ -147,13 +147,13 @@
 	var/turf/open/location = isturf(holder) ? holder : null
 
 	var/burned_fuel = 0
-	if(air.get_moles(GAS_O2) < air.get_moles(GAS_TRITIUM))
+	if(air.get_moles(GAS_O2) < air.get_moles(GAS_CO2))
 		burned_fuel = air.get_moles(GAS_O2)/TRITIUM_BURN_OXY_FACTOR
-		air.adjust_moles(GAS_TRITIUM, -burned_fuel)
+		air.adjust_moles(GAS_CO2, -burned_fuel)
 	else
-		burned_fuel = air.get_moles(GAS_TRITIUM)*TRITIUM_BURN_TRIT_FACTOR
-		air.adjust_moles(GAS_TRITIUM, -air.get_moles(GAS_TRITIUM)/TRITIUM_BURN_TRIT_FACTOR)
-		air.adjust_moles(GAS_O2,-air.get_moles(GAS_TRITIUM))
+		burned_fuel = air.get_moles(GAS_CO2)*TRITIUM_BURN_TRIT_FACTOR
+		air.adjust_moles(GAS_CO2, -air.get_moles(GAS_CO2)/TRITIUM_BURN_TRIT_FACTOR)
+		air.adjust_moles(GAS_O2,-air.get_moles(GAS_CO2))
 
 	if(burned_fuel)
 		energy_released += (FIRE_HYDROGEN_ENERGY_RELEASED * burned_fuel)
@@ -183,7 +183,7 @@
 
 /datum/gas_reaction/tritfire/test()
 	var/datum/gas_mixture/G = new
-	G.set_moles(GAS_TRITIUM,50)
+	G.set_moles(GAS_CO2,50)
 	G.set_moles(GAS_O2,50)
 	G.set_temperature(500)
 	var/result = G.react()
@@ -391,7 +391,7 @@
 /datum/gas_reaction/fusion/init_reqs()
 	min_requirements = list(
 		"TEMP" = FUSION_TEMPERATURE_THRESHOLD,
-		GAS_TRITIUM = FUSION_TRITIUM_MOLES_USED,
+		GAS_CO2 = FUSION_TRITIUM_MOLES_USED,
 		GAS_PLASMA = FUSION_MOLE_THRESHOLD,
 		GAS_CO2 = FUSION_MOLE_THRESHOLD)
 
@@ -440,7 +440,7 @@
 		air.set_moles(GAS_PLASMA,initial_plasma)
 		air.set_moles(GAS_CO2, initial_carbon)
 		return NO_REACTION
-	air.adjust_moles(GAS_TRITIUM, -FUSION_TRITIUM_MOLES_USED)
+	air.adjust_moles(GAS_CO2, -FUSION_TRITIUM_MOLES_USED)
 	//The decay of the tritium and the reaction's energy produces waste gases, different ones depending on whether the reaction is endo or exothermic
 	if(reaction_energy > 0)
 		air.adjust_moles(GAS_O2, FUSION_TRITIUM_MOLES_USED*(reaction_energy*FUSION_TRITIUM_CONVERSION_COEFFICIENT))
@@ -466,7 +466,7 @@
 	var/datum/gas_mixture/G = new
 	G.set_moles(GAS_CO2,300)
 	G.set_moles(GAS_PLASMA,1000)
-	G.set_moles(GAS_TRITIUM,100.61)
+	G.set_moles(GAS_CO2,100.61)
 	G.set_moles(GAS_NITRYL,1)
 	G.set_temperature(15000)
 	G.set_volume(1000)
@@ -591,7 +591,7 @@
 
 /datum/gas_reaction/stimformation/init_reqs()
 	min_requirements = list(
-		GAS_TRITIUM = 30,
+		GAS_CO2 = 30,
 		GAS_PLASMA = 10,
 		GAS_BZ = 20,
 		GAS_NITRYL = 30,
@@ -599,13 +599,13 @@
 
 /datum/gas_reaction/stimformation/react(datum/gas_mixture/air)
 	var/old_heat_capacity = air.heat_capacity()
-	var/heat_scale = min(air.return_temperature()/STIMULUM_HEAT_SCALE,air.get_moles(GAS_TRITIUM),air.get_moles(GAS_PLASMA),air.get_moles(GAS_NITRYL))
+	var/heat_scale = min(air.return_temperature()/STIMULUM_HEAT_SCALE,air.get_moles(GAS_PLASMA),air.get_moles(GAS_NITRYL))
 	var/stim_energy_change = heat_scale + STIMULUM_FIRST_RISE*(heat_scale**2) - STIMULUM_FIRST_DROP*(heat_scale**3) + STIMULUM_SECOND_RISE*(heat_scale**4) - STIMULUM_ABSOLUTE_DROP*(heat_scale**5)
 
-	if ((air.get_moles(GAS_TRITIUM) - heat_scale < 0 )|| (air.get_moles(GAS_PLASMA) - heat_scale < 0) || (air.get_moles(GAS_NITRYL) - heat_scale < 0)) //Shouldn't produce gas from nothing.
+	if ((air.get_moles(GAS_PLASMA) - heat_scale < 0) || (air.get_moles(GAS_NITRYL) - heat_scale < 0)) //Shouldn't produce gas from nothing.
 		return NO_REACTION
 	air.adjust_moles(GAS_STIMULUM, heat_scale/10)
-	air.adjust_moles(GAS_TRITIUM, -heat_scale)
+
 	air.adjust_moles(GAS_PLASMA, -heat_scale)
 	air.adjust_moles(GAS_NITRYL, -heat_scale)
 
@@ -621,7 +621,7 @@
 	var/datum/gas_mixture/G = new
 	G.set_moles(GAS_BZ,30)
 	G.set_moles(GAS_PLASMA,1000)
-	G.set_moles(GAS_TRITIUM,1000)
+	G.set_moles(GAS_CO2,1000)
 	G.set_moles(GAS_NITRYL,1000)
 	G.set_volume(1000)
 	G.set_temperature(12998000) // yeah, really
@@ -642,17 +642,17 @@
 	min_requirements = list(
 
 		GAS_N2 = 10,
-		GAS_TRITIUM = 5,
+		GAS_CO2 = 5,
 		"ENER" = NOBLIUM_FORMATION_ENERGY)
 
 
 /datum/gas_reaction/nobliumformation/react(datum/gas_mixture/air)
 	var/old_heat_capacity = air.heat_capacity()
-	var/nob_formed = min((air.get_moles(GAS_N2)+air.get_moles(GAS_TRITIUM))/100,air.get_moles(GAS_TRITIUM)/10,air.get_moles(GAS_N2)/20)
+	var/nob_formed = min((air.get_moles(GAS_N2)+air.get_moles(GAS_CO2))/100,air.get_moles(GAS_CO2)/10,air.get_moles(GAS_N2)/20)
 	var/energy_taken = nob_formed*(NOBLIUM_FORMATION_ENERGY/(max(air.get_moles(GAS_BZ),1)))
-	if ((air.get_moles(GAS_TRITIUM) - 10*nob_formed < 0) || (air.get_moles(GAS_N2) - 20*nob_formed < 0))
+	if ((air.get_moles(GAS_CO2) - 10*nob_formed < 0) || (air.get_moles(GAS_N2) - 20*nob_formed < 0))
 		return NO_REACTION
-	air.adjust_moles(GAS_TRITIUM, -10*nob_formed)
+	air.adjust_moles(GAS_CO2, -10*nob_formed)
 	air.adjust_moles(GAS_N2, -20*nob_formed)
 	air.adjust_moles(GAS_HYPERNOB,nob_formed)
 
@@ -666,7 +666,7 @@
 /datum/gas_reaction/nobliumformation/test()
 	var/datum/gas_mixture/G = new
 	G.set_moles(GAS_N2,100)
-	G.set_moles(GAS_TRITIUM,500)
+	G.set_moles(GAS_CO2,500)
 	G.set_volume(1000)
 	G.set_temperature(5000000) // yeah, really
 	var/result = G.react()
