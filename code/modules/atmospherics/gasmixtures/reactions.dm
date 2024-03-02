@@ -138,7 +138,7 @@
 	if(istype(location) && prob(10))
 		radiation_pulse(location, rad_power)
 */
-/datum/gas_reaction/tritfire/react(datum/gas_mixture/air, datum/holder)
+/* /datum/gas_reaction/tritfire/react(datum/gas_mixture/air, datum/holder)
 	var/energy_released = 0
 	var/old_heat_capacity = air.heat_capacity()
 	var/temperature = air.return_temperature()
@@ -180,7 +180,7 @@
 			location.temperature_expose(air, temperature, CELL_VOLUME)
 
 	return cached_results["fire"] ? REACTING : NO_REACTION
-
+*/
 /datum/gas_reaction/tritfire/test()
 	var/datum/gas_mixture/G = new
 	G.set_moles(GAS_CO2,50)
@@ -391,7 +391,7 @@
 /datum/gas_reaction/fusion/init_reqs()
 	min_requirements = list(
 		"TEMP" = FUSION_TEMPERATURE_THRESHOLD,
-		GAS_CO2 = FUSION_TRITIUM_MOLES_USED,
+		GAS_TRITIUM = FUSION_TRITIUM_MOLES_USED,
 		GAS_PLASMA = FUSION_MOLE_THRESHOLD,
 		GAS_CO2 = FUSION_MOLE_THRESHOLD)
 
@@ -408,7 +408,7 @@
 	var/old_heat_capacity = air.heat_capacity()
 	var/reaction_energy = 0 //Reaction energy can be negative or positive, for both exothermic and endothermic reactions.
 	var/initial_plasma = air.get_moles(GAS_PLASMA)
-	var/initial_carbon = air.get_moles(GAS_CO2)
+	var/initial_carbon = air.get_moles(GAS_TRITIUM)
 	var/scale_factor = (air.return_volume())/(PI) //We scale it down by volume/Pi because for fusion conditions, moles roughly = 2*volume, but we want it to be based off something constant between reactions.
 	var/toroidal_size = (2*PI)+TORADIANS(arctan((air.return_volume()-TOROID_VOLUME_BREAKEVEN)/TOROID_VOLUME_BREAKEVEN)) //The size of the phase space hypertorus
 	var/gas_power = 0
@@ -427,7 +427,7 @@
 
 
 	air.set_moles(GAS_PLASMA, plasma*scale_factor + FUSION_MOLE_THRESHOLD) //Scales the gases back up
-	air.set_moles(GAS_CO2 , carbon*scale_factor + FUSION_MOLE_THRESHOLD)
+	air.set_moles(GAS_TRITIUM , carbon*scale_factor + FUSION_MOLE_THRESHOLD)
 	var/delta_plasma = initial_plasma - air.get_moles(GAS_PLASMA)
 
 	reaction_energy += delta_plasma*PLASMA_BINDING_ENERGY //Energy is gained or lost corresponding to the creation or destruction of mass.
@@ -438,9 +438,9 @@
 
 	if(air.thermal_energy() + reaction_energy < 0) //No using energy that doesn't exist.
 		air.set_moles(GAS_PLASMA,initial_plasma)
-		air.set_moles(GAS_CO2, initial_carbon)
+		air.set_moles(GAS_TRITIUM, initial_carbon)
 		return NO_REACTION
-	air.adjust_moles(GAS_CO2, -FUSION_TRITIUM_MOLES_USED)
+	air.adjust_moles(GAS_TRITIUM, -FUSION_TRITIUM_MOLES_USED)
 	//The decay of the tritium and the reaction's energy produces waste gases, different ones depending on whether the reaction is endo or exothermic
 	if(reaction_energy > 0)
 		air.adjust_moles(GAS_O2, FUSION_TRITIUM_MOLES_USED*(reaction_energy*FUSION_TRITIUM_CONVERSION_COEFFICIENT))
@@ -466,7 +466,7 @@
 	var/datum/gas_mixture/G = new
 	G.set_moles(GAS_CO2,300)
 	G.set_moles(GAS_PLASMA,1000)
-	G.set_moles(GAS_CO2,100.61)
+	G.set_moles(GAS_TRITIUM,100.61)
 	G.set_moles(GAS_NITRYL,1)
 	G.set_temperature(15000)
 	G.set_volume(1000)

@@ -301,14 +301,14 @@ we use a hook instead
 	return 1
 */
 
-/*
+
 /datum/gas_mixture/react(datum/holder)
 	. = NO_REACTION
 	if(!total_moles())
 		return
 	var/list/reactions = list()
 	for(var/datum/gas_reaction/G in SSair.gas_reactions)
-		if(get_moles(G.major_gas))
+		if(get_moles)
 			reactions += G
 	if(!length(reactions))
 		return
@@ -349,7 +349,7 @@ we use a hook instead
 			. |= reaction.react(src, holder)
 			if (. & STOP_REACTIONS)
 				break
-*/
+
 
 /datum/gas_mixture/proc/set_analyzer_results(instability)
 	if(!analyzer_results)
